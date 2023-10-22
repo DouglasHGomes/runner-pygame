@@ -15,17 +15,21 @@ def display_title_screen():
     screen.blit(upper_title_surf, upper_title_rect)
     screen.blit(lower_title_surf, lower_title_rect)
     
-def display_game_over_screen():
+def display_game_over_screen(score):
     
     game_over_surf = font.render("Game Over", False, (64, 64, 64))
     game_over_rect = game_over_surf.get_rect(midbottom = (400, 50))
+    
+    game_over_score_surf = font.render("Score: " + str(score), False, (64, 64, 64))
+    game_over_score_rect = game_over_score_surf.get_rect(midbottom = (400, 80))
     
     game_restart_surf = font.render("Press Space to restart", False, (64, 64, 64))
     game_restart_rect = game_restart_surf.get_rect(midbottom = (400, 350))
     
     screen.fill((94, 129, 162))
-    display_score(400, 90)
+
     screen.blit(game_over_surf, game_over_rect)
+    screen.blit(game_over_score_surf, game_over_score_rect)
     screen.blit(player_stand_surf, player_stand_rect)
     screen.blit(game_restart_surf, game_restart_rect)    
     
@@ -34,12 +38,14 @@ def display_background():
     screen.blit(ground_surface, (0, 275))
 
 def display_score(x, y):
-    time = pygame.time.get_ticks() - start_time
+    time_score = int((pygame.time.get_ticks() - start_time)/1000)
     
-    score_surf = font.render("Score: " + str(int(time/1000)), False, (64, 64, 64))
+    score_surf = font.render("Score: " + str(time_score), False, (64, 64, 64))
     score_rect = score_surf.get_rect(midbottom = (x, y))
     
     screen.blit(score_surf, score_rect)
+    
+    return time_score
 
 # Initial values
 pygame.init()
@@ -50,6 +56,7 @@ font = pygame.font.Font('font\Pixeltype.ttf', 50)
 game_state = 'start'
 start_time = 0
 player_gravity = 0
+score = 0
 
 sky_surface = pygame.image.load('graphics\Sky.png').convert()
 ground_surface = pygame.image.load('graphics\ground.png').convert()
@@ -91,7 +98,7 @@ while True:
             
         case 'active':
             display_background()
-            display_score(400, 55)
+            score = display_score(400, 55)
 
             screen.blit(snail_surf, snail_rect)
             screen.blit(player_surf, player_rect)
@@ -111,7 +118,7 @@ while True:
                 game_state = 'end'
             
         case 'end':
-            display_game_over_screen()        
+            display_game_over_screen(score)        
 
     pygame.display.update()
     clock.tick(60)
